@@ -3,7 +3,7 @@
       <el-row>
         <el-col :span="14" data-tauri-drag-region>
           <label class="title" data-tauri-drag-region>
-            &nbsp;&nbsp;&nbsp;&nbsp;Tauri Vue App
+            &nbsp;&nbsp;&nbsp;&nbsp;小明视频编辑器
           </label>
         </el-col>
         <el-col :span="6" data-tauri-drag-region/>

@@ -69,7 +69,7 @@
     "systemTray": {
       "iconPath": "icons/icon.png",
       "iconAsTemplate": true,
-      "title": "Tauri Vue App"
+      "title": "小明视频编辑器"
     },
     "windows": [
       {
@@ -79,7 +79,7 @@
         "width": 1000,
         "center": true,
         "resizable": true,
-        "title": "Tauri Vue App",
+        "title": "小明视频编辑器",
         "decorations": false
       }
     ]

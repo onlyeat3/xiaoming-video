@@ -1,7 +1,7 @@
 [package]
-name = "tauri-vue-app"
+name = "xiaoming-video"
 version = "0.0.1"
-description = "Tauri Vue App"
+description = "小明视频编辑器"
 authors = ["you"]
 license = ""
 repository = ""
