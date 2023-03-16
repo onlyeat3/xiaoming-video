@@ -13,11 +13,11 @@
   "tauri": {
     "allowlist": {
       "all": false,
-      "window":{
-        "all":true
+      "window": {
+        "all": true
       },
-      "dialog":{
-        "all":true
+      "dialog": {
+        "all": true
       },
       "shell": {
         "all": false,
@@ -69,18 +69,18 @@
     "systemTray": {
       "iconPath": "icons/icon.png",
       "iconAsTemplate": true,
-      "title":"Tauri Vue App"
+      "title": "Tauri Vue App"
     },
     "windows": [
       {
         "label": "main",
         "fullscreen": false,
         "height": 800,
-        "width":1000,
-        "center":true,
+        "width": 1000,
+        "center": true,
         "resizable": true,
         "title": "Tauri Vue App",
-        "decorations":false
+        "decorations": false
       }
     ]
   }
