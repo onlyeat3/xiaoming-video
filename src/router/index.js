@@ -13,7 +13,7 @@ const routes = [
           keepAlive: true,
         },
         component: () => import('@/views/home/index.vue'),
-      }, 
+      },
       {
         path: '/search',
         name: 'Search',
@@ -22,8 +22,16 @@ const routes = [
         },
         component: () => import('@/views/search/index.vue'),
       },
+      {
+        path: '/add-task',
+        name: 'AddTask',
+        meta: {
+          keepAlive: false,
+        },
+        component: () => import('@/views/video/CodecConvert.vue'),
+      },
     ],
-  }
+  },
 ]
 
 const router = createRouter({

@@ -8,11 +8,7 @@
     </el-button-group>
 
     <!-- 表格 -->
-    <el-table
-      v-loading="loading"
-      :data="tableData"
-      @selection-change="onSelectionChange"
-    >
+    <el-table v-loading="loading" :data="tableData" @selection-change="onSelectionChange">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="filename" label="文件名"></el-table-column>
       <el-table-column prop="videoEncoding" label="视频编码"></el-table-column>
@@ -32,6 +28,8 @@
 <script>
 import { ref } from "vue";
 import { ElButton, ElButtonGroup, ElTable, ElTableColumn, ElProgress } from "element-plus";
+import { useRouter } from 'vue-router'
+
 
 export default {
   components: {
@@ -42,6 +40,7 @@ export default {
     ElProgress
   },
   setup() {
+    const router = useRouter();
     // 初始化数据
     const loading = ref(false);
     const selectedRows = ref([]);
@@ -76,6 +75,7 @@ export default {
     // 添加任务
     const addTask = () => {
       console.log('添加任务');
+      router.push('/add-task');
     };
 
     return {

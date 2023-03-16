@@ -5,6 +5,6 @@
   </div>
 </template>
 <script setup>
-import Test from '../video/Test.vue';
+import Test from '../video/index.vue';
 import CodecConvert from '../video/CodecConvert.vue';
 </script>
