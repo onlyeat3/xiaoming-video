@@ -3,29 +3,35 @@
     windows_subsystem = "windows"
 )]
 
-use tauri::{SystemTray, CustomMenuItem, SystemTrayMenu, SystemTrayEvent, Manager, AppHandle, Runtime, Window, SystemTrayMenuItem, GlobalWindowEvent, WindowEvent};
+use tauri::{
+    AppHandle, CustomMenuItem, GlobalWindowEvent, Manager, Runtime, SystemTray, SystemTrayEvent,
+    SystemTrayMenu, SystemTrayMenuItem, Window, WindowEvent,
+};
+use transcode::{TranscodeJob, TranscodeManager};
 
-const MAIN_LABEL:&str = "main";
+mod transcode;
+
+const MAIN_LABEL: &str = "main";
+const TRANSCODE_MANAGER: TranscodeManager = TranscodeManager::new();
 fn main() {
-    
-
     let quit = CustomMenuItem::new("quit".to_string(), "退出");
     let dev_tool = CustomMenuItem::new("devTool".to_string(), "调试工具");
     let tray_menu = SystemTrayMenu::new()
         .add_item(dev_tool)
         .add_native_item(SystemTrayMenuItem::Separator)
         .add_item(quit);
-    let system_tray = SystemTray::new()
-        .with_menu(tray_menu);
+    let system_tray = SystemTray::new().with_menu(tray_menu);
 
     tauri::Builder::default()
         //单实例功能实现
-        .plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| single_instance(app)))
+        .plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
+            single_instance(app)
+        }))
         // 采用CloseRequested 处理关闭提示消息，在自定义中调用close关闭窗体并没有触发CloseRequested事件，未确定原因
         // 暂时采用事件 方式实现
-        .setup(| app | {
+        .setup(|app| {
             let window: Window = app.get_window(MAIN_LABEL).unwrap();
-            app.listen_global("app-exist",  move |_| app_exist(Some(&window)));
+            app.listen_global("app-exist", move |_| app_exist(Some(&window)));
             Ok(())
         })
         .system_tray(system_tray)
@@ -36,7 +42,7 @@ fn main() {
         .expect("error while running tauri application")
 }
 
-fn single_instance(app:&AppHandle) {
+fn single_instance(app: &AppHandle) {
     let window = app.get_window(MAIN_LABEL).unwrap();
     //窗体最小化后显示窗体
     window.unminimize().unwrap();
@@ -44,19 +50,19 @@ fn single_instance(app:&AppHandle) {
     window.set_focus().unwrap();
 }
 
-fn menu_handle(app:&AppHandle, event: SystemTrayEvent) {
+fn menu_handle(app: &AppHandle, event: SystemTrayEvent) {
     match event {
         SystemTrayEvent::DoubleClick {
             position: _,
             size: _,
             ..
-          } => {
+        } => {
             let window = app.get_window(MAIN_LABEL).unwrap();
             //显示窗体
             window.unminimize().unwrap();
-            window.show().unwrap(); 
+            window.show().unwrap();
             window.set_focus().unwrap();
-          }
+        }
         SystemTrayEvent::MenuItemClick { id, .. } => {
             match id.as_str() {
                 "quit" => {
@@ -77,23 +83,48 @@ fn menu_handle(app:&AppHandle, event: SystemTrayEvent) {
     }
 }
 
-fn window_event(event:GlobalWindowEvent){
+fn window_event(event: GlobalWindowEvent) {
     match event.event() {
         WindowEvent::CloseRequested { api, .. } => {
             let window = event.window().clone();
-            if  window.label() == MAIN_LABEL {
+            if window.label() == MAIN_LABEL {
                 api.prevent_close();
                 app_exist(Some(&window));
             }
         }
         _ => {}
-    } 
+    }
 }
 
 fn app_exist<R: Runtime>(parent_window: Option<&Window<R>>) {
-    tauri::api::dialog::confirm(parent_window, "退出", "确定要退出程序吗？",  | answer | {
-        if answer {
-            std::process::exit(-1);
-        }
-    })
+    tauri::api::dialog::confirm(
+        parent_window,
+        "退出",
+        "确定要退出程序吗？",
+        |answer| {
+            if answer {
+                std::process::exit(-1);
+            }
+        },
+    )
+}
+
+#[tauri::command]
+fn add_job(ffmpeg_cmd: &str) {
+    TRANSCODE_MANAGER.add_job(ffmpeg_cmd);
+}
+
+#[tauri::command]
+fn stop_job(index: u32) {
+    TRANSCODE_MANAGER.stop_job(index.try_into().unwrap());
+}
+
+#[tauri::command]
+fn get_job_list() -> Vec<TranscodeJob> {
+    TRANSCODE_MANAGER.get_job_list()
+}
+
+#[tauri::command]
+fn add_job(ffmpeg_cmd: &str) {
+    TRANSCODE_MANAGER.add_job(ffmpeg_cmd);
 }
